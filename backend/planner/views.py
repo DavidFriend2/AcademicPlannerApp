@@ -7,9 +7,11 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
 
 class AssignmentViewSet(viewsets.ModelViewSet):
-    queryset = Assignment.objects.all()
+    # This sorts by due_date (closest first)
+    queryset = Assignment.objects.all().order_by('due_date')
     serializer_class = AssignmentSerializer
 
 class ExamViewSet(viewsets.ModelViewSet):
-    queryset = Exam.objects.all()
+    # This sorts by date (closest first)
+    queryset = Exam.objects.all().order_by('date')
     serializer_class = ExamSerializer

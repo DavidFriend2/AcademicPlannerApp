@@ -15,6 +15,9 @@ class Assignment(models.Model):
     # This links the assignment to a specific course
     related_course = models.ForeignKey(Course, on_delete=models.CASCADE) 
     is_completed = models.BooleanField(default=False)
+    @property
+    def is_overdue(self):
+        return not self.is_completed and self.due_date < timezone.now()
     
     def __str__(self):
         return f"{self.title} - {self.related_course.course_id}"
