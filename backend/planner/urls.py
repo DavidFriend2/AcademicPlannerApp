@@ -4,9 +4,9 @@ from .views import CourseViewSet, AssignmentViewSet, ExamViewSet
 
 # A router automatically generates all the standard URL paths for us
 router = DefaultRouter()
-router.register(r'courses', CourseViewSet)
-router.register(r'assignments', AssignmentViewSet)
-router.register(r'exams', ExamViewSet)
+router.register(r'courses', CourseViewSet, basename='course')
+router.register(r'assignments', AssignmentViewSet, basename='assignment')
+router.register(r'exams', ExamViewSet, basename='exam')
 
 urlpatterns = [
     path('', include(router.urls)),

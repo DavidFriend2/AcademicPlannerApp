@@ -5,10 +5,11 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = '__all__' # This tells includes all columns (id, name, etc.)
+        read_only_fields = ['user']
 
 class AssignmentSerializer(serializers.ModelSerializer):
+    is_overdue = serializers.ReadOnlyField()
     class Meta:
-        is_overdue = serializers.ReadOnlyField()
         model = Assignment
         fields = ['id', 'title', 'due_date', 'related_course', 'is_completed', 'is_overdue']
 
