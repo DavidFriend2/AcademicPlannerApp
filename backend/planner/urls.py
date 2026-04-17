@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import CourseViewSet, AssignmentViewSet, ExamViewSet
+from .views import CourseViewSet, AssignmentViewSet, ExamViewSet, calendar_events, calendar_export_ics
 
 # A router automatically generates all the standard URL paths for us
 router = DefaultRouter()
@@ -10,4 +10,6 @@ router.register(r'exams', ExamViewSet, basename='exam')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('calendar/', calendar_events, name='calendar-events'),
+    path('calendar/export/', calendar_export_ics, name='calendar-export'),
 ]
