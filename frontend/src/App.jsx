@@ -55,15 +55,25 @@ function App() {
             <div className="empty-cell"></div>
             <div className="empty-cell"></div>
 
-            {calendarDays.map((day) => (
-              <div key={day} className="calendar-cell">
-                <span className="day-number">{day}</span>
+            {calendarDays.map((day) => {
+              const dayEvents = sortedEvents.filter(
+                (event) => new Date(event.date).getDate() === day)
+              return (
+                <div key={day} className="calendar-cell">
+                   <span className="day-number">{day}</span>
 
-                {(day === 15 || day === 16 || day === 18) && (
-                  <div className="calendar-event-marker">Event</div>
-                )}
-              </div>
-            ))}
+      {dayEvents.map((event) => (
+        <div
+          key={event.id}
+          className="calendar-event-marker"
+          title={`${event.title} - ${event.date} ${event.time}`}
+        >
+          {event.title}
+        </div>
+      ))}
+    </div>
+  )
+})}
           </div>
         </section>
       </main>
