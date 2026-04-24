@@ -25,7 +25,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 class AssignmentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    serializer_class = CourseSerializer
+    serializer_class = AssignmentSerializer
 
     # Only gives assignments that are from the specific user, sorts by due_date (closest first)
     def get_queryset(self):
@@ -33,20 +33,15 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
 class ExamViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    serializer_class = CourseSerializer
+    serializer_class = ExamSerializer
 
     # Only gives exams that are from the specific user, sorts by date (closest first)
     def get_queryset(self):
         return Exam.objects.filter(related_course__user=self.request.user).order_by('date')
     
 @api_view(["GET"])
-#Replace these if no authentication for testing purpose with: blank
 @permission_classes([IsAuthenticated])
 def calendar_events(request):
-
-    #Replace these if no authentication for testing purpose with: 
-    #assignments = Assignment.objects.all().order_by("due_date")
-    #exams = Exam.objects.all().order_by("date")
     assignments = Assignment.objects.filter(
         related_course__user=request.user
     ).order_by("due_date")
@@ -86,9 +81,11 @@ def calendar_events(request):
     return Response(events)
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def calendar_export_ics(request):
-    assignments = Assignment.objects.all().order_by("due_date")
-    exams = Exam.objects.all().order_by("date")
+    # Only gets assignments/exams assigned to user
+    assignments = Assignment.objects.filter(related_course__user=request.user).order_by("due_date")
+    exams = Exam.objects.filter(related_course__user=request.user).order_by("date")
 
     cal = Calendar()
     cal.add("prodid", "-//Academic Planner//Calendar Export//EN")
