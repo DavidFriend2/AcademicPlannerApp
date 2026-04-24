@@ -118,7 +118,7 @@ select {
   font-size: 18px;
 }
 
-.deadline-card,
+.event-card,
 .calendar-card,
 .selected-card {
   background: white;
@@ -126,25 +126,70 @@ select {
   border-radius: 12px;
   padding: 16px;
 }
-
-.deadline-card.assignment {
-  border-left: 5px solid #d9534f;
+.event-card {
+  display: flex;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  margin-bottom: 18px;
+  min-height: 150px;
+  border: 1px solid #d9dde3;
 }
 
-.deadline-card.exam {
-  border-left: 5px solid #5cb85c;
+.event-label {
+  width: 100px;
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  padding: 20px;
 }
 
-.deadline-title {
-  font-weight: bold;
-  margin-bottom: 6px;
+.event-card.assignment .event-label {
+  background: #d8433e;
 }
 
-.deadline-course,
-.deadline-date {
-  color: #444;
-  font-size: 14px;
-  margin-bottom: 4px;
+.event-card.exam .event-label {
+  background: #43a35c;
+}
+
+.event-content {
+  flex: 1;
+  padding: 26px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.event-title {
+  margin: 0 0 12px 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.event-course {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.event-time {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #111827;
+}
+
+.event-extra {
+  margin: 4px 0 0 0;
+  font-size: 16px;
+  color: #374151;
 }
 
 .toolbar {
@@ -158,7 +203,7 @@ select {
   padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid #bbb;
-  background: white;
+  background: rgb(119, 123, 255);
 }
 
 .calendar-header {

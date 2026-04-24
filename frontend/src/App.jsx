@@ -156,18 +156,38 @@ function CalendarPage({ token, username, onLogout }) {
       <main className="dashboard">
         <section className="left-panel">
           <h2>YOUR DEADLINES</h2>
-
           {events.map((event) => (
-            <div key={event.id} className={`deadline-card ${event.type}`}>
-              <div className="deadline-title">{event.title}</div>
-              <div className="deadline-course">
-                {event.course_id} - {event.course_name}
-              </div>
-              <div className="deadline-date">
-                {new Date(event.start).toLocaleString()}
-              </div>
+          <div key={event.id} className={`event-card ${event.type}`}>
+            <div className="event-label">
+              {event.type === 'assignment' ? 'Assignment' : 'Exam'}
             </div>
-          ))}
+            <div className="event-content">
+              <h3 className="event-title">{event.title}</h3>
+
+              <p className="event-course">
+                {event.course_id} - {event.course_name}
+              </p>
+
+              <p className="event-time">
+                {new Date(event.start).toLocaleString()}
+              </p>
+
+              {event.type === 'assignment' && event.is_completed !== undefined && (
+                <p className="event-extra">
+                  Completed: {event.is_completed ? 'Yes' : 'No'}
+                </p>
+              )}
+
+              {event.type === 'exam' && event.location && (
+                <p className="event-extra">Location: {event.location}</p>
+              )}
+
+              {event.type === 'exam' && event.duration_minutes && (
+                <p className="event-extra">Duration: {event.duration_minutes} min</p>
+              )}
+            </div>
+          </div>
+        ))}
         </section>
 
         <section className="right-panel">
