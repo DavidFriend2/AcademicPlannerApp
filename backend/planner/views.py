@@ -2,7 +2,7 @@ from datetime import timedelta
 from django.http import HttpResponse
 from django.utils import timezone
 from icalendar import Calendar, Event
-
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
@@ -30,6 +30,22 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     # Only gives assignments that are from the specific user, sorts by due_date (closest first)
     def get_queryset(self):
         return Assignment.objects.filter(related_course__user=self.request.user).order_by('due_date')
+    @action(detail=False, methods=['get'])
+    def upcoming(self, request):
+        """
+        Returns a list of assignments that are NOT completed 
+        and have a due_date in the future.
+        """
+        now = timezone.now()
+        
+        # Filter for incomplete tasks where the due_date is greater than (gt) right now
+        upcoming_tasks = self.get_queryset().filter(
+            is_completed=False,
+            due_date__gt=now
+        )
+        
+        serializer = self.get_serializer(upcoming_tasks, many=True)
+        return Response(serializer.data)
 
 class ExamViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -38,6 +54,18 @@ class ExamViewSet(viewsets.ModelViewSet):
     # Only gives exams that are from the specific user, sorts by date (closest first)
     def get_queryset(self):
         return Exam.objects.filter(related_course__user=self.request.user).order_by('date')
+    @action(detail=False, methods=['get'])
+    def upcoming(self, request):
+        """
+        Returns a list of exams that are in the future.
+        """
+        now = timezone.now()
+        
+        # Filter for exams where the date is greater than (gt) right now
+        upcoming_exams = self.get_queryset().filter(date__gt=now)
+        
+        serializer = self.get_serializer(upcoming_exams, many=True)
+        return Response(serializer.data)
     
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
