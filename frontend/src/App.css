@@ -24,13 +24,16 @@ select {
   background: white;
   padding: 32px;
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
 .login-card h1 {
   margin-top: 0;
   margin-bottom: 8px;
   text-align: center;
+  color: #355bb4;
+  font-weight: 900;
+  font-size: 36px;
 }
 
 .login-subtitle {
@@ -93,7 +96,7 @@ select {
 
 .logout-btn {
   border: 1px solid #ccc;
-  background: white;
+  background: rgb(255, 0, 0);
   padding: 6px 12px;
   border-radius: 8px;
   cursor: pointer;
@@ -241,6 +244,66 @@ select {
 
 .calendar-cell.empty {
   background: transparent;
+  border: none;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  width: 420px;
+  max-width: 90%;
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.assignment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.assignment-form input,
+.assignment-form select {
+  padding: 12px;
+  border: 1px solid #c7ccd4;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.form-actions button {
+  padding: 10px 14px;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  background: rgb(255, 0, 0);
+  cursor: pointer;
+}
+
+.form-actions button[type='submit'] {
+  background: #1f2937;
+  color: white;
   border: none;
 }
 

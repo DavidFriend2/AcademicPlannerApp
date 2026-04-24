@@ -76,23 +76,45 @@ function CalendarPage({ token, username, onLogout }) {
   const [selectedDate, setSelectedDate] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [courses, setCourses] = useState([])
+  const [newAssignment, setNewAssignment] = useState({
+    title: '',
+    related_course: '',
+    due_date: '',
+    is_completed: false,
+  })
 
   useState(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/calendar/', {
+        const eventResponse = await fetch('http://127.0.0.1:8000/api/calendar/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
 
-        const data = await response.json()
+        const eventData = await eventResponse.json()
 
-        if (!response.ok) {
-          throw new Error(data.detail || 'Failed to fetch calendar events')
+        if (!eventResponse.ok) {
+          throw new Error(eventData.detail || 'Failed to fetch calendar events')
         }
 
-        setEvents(data)
+        setEvents(eventData)
+
+        const courseResponse = await fetch('http://127.0.0.1:8000/api/courses/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        const courseData = await courseResponse.json()
+
+        if (!courseResponse.ok) {
+          throw new Error(courseData.detail || 'Failed to fetch courses')
+        }
+
+        setCourses(courseData)
       } catch (err) {
         setError(err.message)
       }
@@ -101,7 +123,7 @@ function CalendarPage({ token, username, onLogout }) {
     }
 
     fetchEvents()
-  }, [])
+  }, [token])
 
   const today = new Date()
   const currentYear = today.getFullYear()
@@ -141,6 +163,51 @@ function CalendarPage({ token, username, onLogout }) {
 
   if (error) {
     return <div className="app-shell"><p>Error: {error}</p></div>
+  }
+
+  const handleAddAssignment = async (e) => {
+  e.preventDefault()
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/assignments/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(newAssignment),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(JSON.stringify(data))
+    }
+
+    setShowAddForm(false)
+    setNewAssignment({
+      title: '',
+      related_course: '',
+      due_date: '',
+      is_completed: false,
+    })
+
+    const refreshResponse = await fetch('http://127.0.0.1:8000/api/calendar/', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    const refreshData = await refreshResponse.json()
+
+    if (!refreshResponse.ok) {
+      throw new Error(refreshData.detail || 'Failed to refresh calendar')
+    }
+
+      setEvents(refreshData)
+    } catch (err) {
+      setError(err.message)
+    }
   }
 
   return (
@@ -192,7 +259,7 @@ function CalendarPage({ token, username, onLogout }) {
 
         <section className="right-panel">
           <div className="toolbar">
-            <button>+ Add Assignment</button>
+            <button onClick={() => setShowAddForm(true)}>+ Add Assignment</button>
             <select>
               <option>Filter: All</option>
             </select>
@@ -200,6 +267,74 @@ function CalendarPage({ token, username, onLogout }) {
               <option>Sort: Date</option>
             </select>
           </div>
+
+          {showAddForm && (
+            <div className="modal-overlay">
+              <div className="modal-card">
+                <h3>Add Assignment</h3>
+
+                <form onSubmit={handleAddAssignment} className="assignment-form">
+                  <input
+                    type="text"
+                    placeholder="Assignment title"
+                    value={newAssignment.title}
+                    onChange={(e) =>
+                      setNewAssignment({ ...newAssignment, title: e.target.value })
+                    }
+                    required
+                  />
+
+                  <select
+                    value={newAssignment.related_course}
+                    onChange={(e) =>
+                      setNewAssignment({
+                        ...newAssignment,
+                        related_course: e.target.value,
+                      })
+                    }
+                    required
+                  >
+                    <option value="">Select a course</option>
+                    {courses.map((course) => (
+                      <option key={course.id} value={course.id}>
+                        {course.course_id} - {course.course_name}
+                      </option>
+                    ))}
+                  </select>
+
+                  <input
+                    type="datetime-local"
+                    value={newAssignment.due_date}
+                    onChange={(e) =>
+                      setNewAssignment({ ...newAssignment, due_date: e.target.value })
+                    }
+                    required
+                  />
+
+                  <label className="checkbox-row">
+                    <input
+                      type="checkbox"
+                      checked={newAssignment.is_completed}
+                      onChange={(e) =>
+                        setNewAssignment({
+                          ...newAssignment,
+                          is_completed: e.target.checked,
+                        })
+                      }
+                    />
+                    Completed
+                  </label>
+
+                  <div className="form-actions">
+                    <button type="submit">Save</button>
+                    <button type="button" onClick={() => setShowAddForm(false)}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
 
           <div className="calendar-card">
             <div className="calendar-header">
@@ -255,8 +390,8 @@ function CalendarPage({ token, username, onLogout }) {
 }
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem('accessToken') || '')
-  const [username, setUsername] = useState(localStorage.getItem('username') || '')
+  const [token, setToken] = useState('')
+  const [username, setUsername] = useState('')
 
   const handleLogin = (newToken, newUsername) => {
     setToken(newToken)
