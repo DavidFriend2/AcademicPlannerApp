@@ -454,7 +454,7 @@ function App() {
 export default App
 
 
-// Code review:
+// Code review (I couldn't find a PR from the front end, so I analyzed the last commit to the frontend):
 // 1. Overall, good code in general. The one issue I have is that it doesn't really follow the MVC pattern
 //    that I learned of in GUI class in the way I prefer, so it is slightly long and complex to read.
 //    This code could benefit from some refactoring that would split up some of the pages into
