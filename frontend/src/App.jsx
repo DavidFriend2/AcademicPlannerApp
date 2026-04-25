@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import './App.css'
 
+// Handle the login function
 function LoginPage({ onLogin }) {
+
+  // State variables
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Attempt a login
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -39,6 +43,7 @@ function LoginPage({ onLogin }) {
     setLoading(false)
   }
 
+  // Return the login page
   return (
     <div className="login-page">
       <div className="login-card">
@@ -71,7 +76,25 @@ function LoginPage({ onLogin }) {
   )
 }
 
+// Get the header for the calender page, given the username
+// And a logout function
+function CalendarHeader({username, onLogout}){
+  return (
+    <header className="topbar">
+        <div className="brand">ACADEMIC PLANNER</div>
+        <div className="topbar-right">
+          <span>[ {username} ]</span>
+          <button className="logout-btn" onClick={onLogout}>Logout</button>
+        </div>
+    </header>
+  );
+}
+
+// Get the calender page, given the username of the person,
+// The login token, and a logout function
 function CalendarPage({ token, username, onLogout }) {
+
+  // State variables
   const [events, setEvents] = useState([])
   const [selectedDate, setSelectedDate] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -85,9 +108,12 @@ function CalendarPage({ token, username, onLogout }) {
     is_completed: false,
   })
 
+  // Yell at Canvas, ask for all the information we need from it
   useState(() => {
     const fetchEvents = async () => {
       try {
+        
+        // Get the events from the calendar
         const eventResponse = await fetch('http://127.0.0.1:8000/api/calendar/', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -102,6 +128,7 @@ function CalendarPage({ token, username, onLogout }) {
 
         setEvents(eventData)
 
+        // Get the courses
         const courseResponse = await fetch('http://127.0.0.1:8000/api/courses/', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -125,6 +152,7 @@ function CalendarPage({ token, username, onLogout }) {
     fetchEvents()
   }, [token])
 
+  // Set up the calendar
   const today = new Date()
   const currentYear = today.getFullYear()
   const currentMonth = today.getMonth()
@@ -165,6 +193,7 @@ function CalendarPage({ token, username, onLogout }) {
     return <div className="app-shell"><p>Error: {error}</p></div>
   }
 
+  // Add a new assignment
   const handleAddAssignment = async (e) => {
   e.preventDefault()
 
@@ -210,15 +239,20 @@ function CalendarPage({ token, username, onLogout }) {
     }
   }
 
+  // An array for the weekdays
+  dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+  // Return the actual assignment page.
   return (
     <div className="app-shell">
-      <header className="topbar">
+      <CalendarHeader username = {username} onLogout = {onLogout} />
+      {/* <header className="topbar">
         <div className="brand">ACADEMIC PLANNER</div>
         <div className="topbar-right">
           <span>[ {username} ]</span>
           <button className="logout-btn" onClick={onLogout}>Logout</button>
         </div>
-      </header>
+      </header> */}
 
       <main className="dashboard">
         <section className="left-panel">
@@ -343,7 +377,7 @@ function CalendarPage({ token, username, onLogout }) {
             </div>
 
             <div className="calendar-grid">
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+              {dayNames.map((day) => (
                 <div key={day} className="calendar-weekday">{day}</div>
               ))}
 
@@ -389,6 +423,8 @@ function CalendarPage({ token, username, onLogout }) {
   )
 }
 
+
+// Manage the app.
 function App() {
   const [token, setToken] = useState('')
   const [username, setUsername] = useState('')
@@ -406,6 +442,8 @@ function App() {
     setUsername('')
   }
 
+  // If the token exists, return the calendar page
+  // Else, return the login page
   return token ? (
     <CalendarPage token={token} username={username} onLogout={handleLogout} />
   ) : (
@@ -414,3 +452,21 @@ function App() {
 }
 
 export default App
+
+
+// Code review:
+// 1. Overall, good code in general. The one issue I have is that it doesn't really follow the MVC pattern
+//    that I learned of in GUI class in the way I prefer, so it is slightly long and complex to read.
+//    This code could benefit from some refactoring that would split up some of the pages into
+//    individual class components, so that it is more obvious what is happening.
+// 2. When it comes to correctness, I am not fully sure about this metric,
+//    as my computer has decided to hate me today. I am not sure why it has done this to me,
+//    but this is a user error and is no fault of the code.
+// 3. When it comes to clarity, the sheer amount of code crammed into this one class irks me.
+//    When I initially viewed this work, there were also no comments at all - I added those in to
+//    to help improve clarity.
+// 4. When it comes to maintainability, this code follows standard style conventions that I've seen
+//    during my interactions with React. 
+// 5. I am unsure whether or not this is AI generated, but it looks to be human-made.
+// 6. My recommendation would be to refactor this code to ensure that subsections of the extremely
+//    long CalanderPage is broken up into separate sections.
