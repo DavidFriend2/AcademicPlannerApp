@@ -1,6 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import CourseViewSet, AssignmentViewSet, ExamViewSet, calendar_events, calendar_export_ics
+from django.urls import path
+from .views import RegisterView
 
 # A router automatically generates all the standard URL paths for us
 router = DefaultRouter()
@@ -12,4 +14,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('calendar/', calendar_events, name='calendar-events'),
     path('calendar/export/', calendar_export_ics, name='calendar-export'),
+    path("register/", RegisterView.as_view(), name="register"),
 ]

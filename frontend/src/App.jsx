@@ -2,15 +2,20 @@ import { useState } from 'react'
 import './App.css'
 
 function LoginPage({ onLogin }) {
+  const [isSignup, setIsSignup] = useState(false)
   const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setMessage('')
 
     try {
       const response = await fetch('http://127.0.0.1:8000/api/token/', {
@@ -39,33 +44,129 @@ function LoginPage({ onLogin }) {
     setLoading(false)
   }
 
+  const handleSignup = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    setMessage('')
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.')
+      setLoading(false)
+      return
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/register/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        const errorText =
+          data.username?.[0] ||
+          data.password?.[0] ||
+          data.email?.[0] ||
+          'Sign up failed.'
+
+        throw new Error(errorText)
+      }
+
+      setMessage('Account created successfully. Please log in.')
+      setIsSignup(false)
+      setPassword('')
+      setConfirmPassword('')
+    } catch (err) {
+      setError(err.message)
+    }
+
+    setLoading(false)
+  }
+
   return (
     <div className="login-page">
       <div className="login-card">
         <h1>Academic Planner</h1>
-        <p className="login-subtitle">Sign in to view your calendar</p>
 
-        <form onSubmit={handleSubmit} className="login-form">
+        <p className="login-subtitle">
+          {isSignup ? 'Create an account' : 'Sign in to view your calendar'}
+        </p>
+
+        <form
+          onSubmit={isSignup ? handleSignup : handleLogin}
+          className="login-form"
+        >
           <input
             type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
+
+          {isSignup && (
+            <input
+              type="email"
+              placeholder="Email optional"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          )}
 
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
 
+          {isSignup && (
+            <input
+              type="password"
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          )}
+
           <button type="submit" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading
+              ? isSignup
+                ? 'Creating account...'
+                : 'Logging in...'
+              : isSignup
+                ? 'Sign Up'
+                : 'Login'}
           </button>
         </form>
 
+        <button
+          type="button"
+          className="switch-auth-btn"
+          onClick={() => {
+            setIsSignup(!isSignup)
+            setError('')
+            setMessage('')
+          }}
+        >
+          {isSignup
+            ? 'Already have an account? Login'
+            : 'Need an account? Sign Up'}
+        </button>
+
         {error && <p className="error-text">{error}</p>}
+        {message && <p className="success-text">{message}</p>}
       </div>
     </div>
   )

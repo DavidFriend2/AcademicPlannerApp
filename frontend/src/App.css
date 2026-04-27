@@ -331,3 +331,22 @@ select {
     grid-template-columns: 1fr;
   }
 }
+
+.switch-auth-btn {
+  margin-top: 12px;
+  background: transparent;
+  border: none;
+  color: #2f5cc8;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.switch-auth-btn:hover {
+  text-decoration: underline;
+}
+
+.success-text {
+  color: #2e7d32;
+  margin-top: 10px;
+  font-size: 14px;
+}

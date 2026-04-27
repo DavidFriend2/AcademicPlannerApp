@@ -7,6 +7,9 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework import generics, permissions
+from django.contrib.auth.models import User
+from .serializers import RegisterSerializer
 
 from .models import Course, Assignment, Exam
 from .serializers import CourseSerializer, AssignmentSerializer, ExamSerializer
@@ -116,3 +119,8 @@ def calendar_export_ics(request):
     response = HttpResponse(cal.to_ical(), content_type="text/calendar")
     response["Content-Disposition"] = 'attachment; filename="calendar.ics"'
     return response
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]

@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import Course, Assignment, Exam
+from django.contrib.auth.models import User
+from rest_framework import serializers
+
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,3 +20,19 @@ class ExamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exam
         fields = '__all__'
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=6)
+    email = serializers.EmailField(required=False, allow_blank=True)
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "password"]
+
+    def create(self, validated_data):
+        return User.objects.create_user(
+            username=validated_data["username"],
+            email=validated_data.get("email", ""),
+            password=validated_data["password"],
+        )
