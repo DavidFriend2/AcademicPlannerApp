@@ -350,3 +350,66 @@ select {
   margin-top: 10px;
   font-size: 14px;
 }
+
+.event-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.complete-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #334155;
+}
+
+.delete-event-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: #ef4444;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.delete-event-btn:hover {
+  background: #dc2626;
+}
+
+.selected-event-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.empty-state {
+  padding: 24px;
+  margin-top: 16px;
+  border: 1px dashed #c7d2fe;
+  border-radius: 12px;
+  background: #f8fafc;
+  text-align: center;
+  color: #475569;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+  color: #1e293b;
+  font-size: 18px;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.small-empty-state {
+  padding: 14px;
+  margin: 12px 0;
+}
