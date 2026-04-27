@@ -26,6 +26,7 @@ class Assignment(models.Model):
         return f"{self.title} - {self.related_course.course_id}"
 # This table stores exams and also links to their course
 class Exam(models.Model):
+    is_completed = models.BooleanField(default=False)
     title = models.CharField(max_length=200) # Exam name
     date = models.DateTimeField() # Exam Date/time
     location = models.CharField(max_length=200, blank=True, null=True) # (Optional) location of exam

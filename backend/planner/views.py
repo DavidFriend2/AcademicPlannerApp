@@ -57,7 +57,7 @@ def calendar_events(request):
 
     for assignment in assignments:
         events.append({
-            "id": f"assignment-{assignment.id}",
+            "id": assignment.id,
             "type": "assignment",
             "title": assignment.title,
             "course_id": assignment.related_course.course_id,
@@ -69,7 +69,7 @@ def calendar_events(request):
 
     for exam in exams:
         events.append({
-            "id": f"exam-{exam.id}",
+            "id": exam.id,
             "type": "exam",
             "title": exam.title,
             "course_id": exam.related_course.course_id,
@@ -78,6 +78,7 @@ def calendar_events(request):
             "end": exam.date + timedelta(minutes=exam.duration_minutes),
             "location": exam.location,
             "duration_minutes": exam.duration_minutes,
+            "is_completed": exam.is_completed,
         })
 
     events.sort(key=lambda x: x["start"])
